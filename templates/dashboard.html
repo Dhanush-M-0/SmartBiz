@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBiz - Business Automation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .nav-tabs button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tabs button:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-tabs button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-left: 4px solid #667eea;
+            padding-left: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #ddd;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #ccc;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table thead {
+            background: #f5f5f5;
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in_progress {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-done {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .priority-high {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .priority-medium {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .nav-tabs button {
+                flex: 1 1 50%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 SmartBiz</h1>
+            <p>Business Automation & Task Management System</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="nav-btn" data-tab="employees">👥 Employees</button>
+            <button class="nav-btn" data-tab="tasks">✅ Tasks</button>
+            <button class="nav-btn" data-tab="reports">📈 Reports</button>
+            <button class="nav-btn" data-tab="settings">⚙️ Settings</button>
+        </div>
+
+        <div class="content">
+            <!-- DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+                <div class="section">
+                    <h2>Welcome to SmartBiz</h2>
+                    <p>Your all-in-one business automation platform. Manage employees, assign tasks, generate reports, and automate notifications—all in one place.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3>📋 Quick Stats</h3>
+                        <p>Total Employees: <strong id="stat-employees">0</strong></p>
+                        <p>Total Tasks: <strong id="stat-tasks">0</strong></p>
+                        <p>Pending: <strong id="stat-pending">0</strong></p>
+                    </div>
+                    <div class="card">
+                        <h3>✨ Features</h3>
+                        <ul style="list-style: none;">
+                            <li>✓ Employee Management</li>
+                            <li>✓ Task Assignment & Tracking</li>
+                            <li>✓ Auto-generated Reports</li>
+                            <li>✓ Email Notifications</li>
+                            <li>✓ Currency Exchange Rates</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Tech Stack</h3>
+                        <ul style="list-style: none;">
+                            <li>Flask Web Framework</li>
+                            <li>Supabase PostgreSQL</li>
+                            <li>Pandas Reports</li>
+                            <li>SMTP Email</li>
+                            <li>Exchange Rate API</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMPLOYEES TAB -->
+            <div id="employees" class="tab-content">
+                <div class="section">
+                    <h2>Add New Employee</h2>
+                    <form id="employee-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="emp-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="emp-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <input type="text" id="emp-dept" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Employee</button>
+                    </form>
+                </div>
+
+                <div class="section">
+                    <h2>Employees List</h2>
+                    <table id="employees-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TASKS TAB -->
+            <div id="tasks" class="tab-content">
+                <div class="section">
+                    <h2>Create New Task</h2>
+                    <form id="task-form">
+                        <div class="form-group">
+                            <label>Task Title</label>
+                            <input type="text" id="task-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="task-desc" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign To (Employee ID)</label>
+                            <input type="number" id="task-assigned" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="task-priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="date" id="task-due" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Task</button>
+                    </form>
+                </div>
+
+                <div class="section">
+                    <h2>Tasks List</h2>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>Filter by Status:</label>
+                        <select id="task-filter">
+                            <option value="">All Tasks</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                    <table id="tasks-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Assigned To</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- REPORTS TAB -->
+            <div id="reports" class="tab-content">
+                <div class="section">
+                    <h2>Generate Reports</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <h3>📋 Task Summary</h3>
+                            <p>Get a comprehensive overview of all tasks with statistics.</p>
+                            <button onclick="generateReport('task-summary')" class="btn btn-primary">
+                                Generate Report
+                            </button>
+                        </div>
+                        <div class="card">
+                            <h3>👥 Performance Report</h3>
+                            <p>View employee task completion rates and performance metrics.</p>
+                            <button onclick="generateReport('performance')" class="btn btn-primary">
+                                Generate Report
+                            </button>
+                        </div>
+                        <div class="card">
+                            <h3>💱 Currency Rates</h3>
+                            <p>Download current exchange rates for multi-currency payroll.</p>
+                            <button onclick="generateReport('currency')" class="btn btn-primary">
+                                Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Available Reports</h2>
+                    <table id="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div id="settings" class="tab-content">
+                <div class="section">
+                    <h2>System Settings</h2>
+                    <div class="alert alert-info">
+                        ℹ️ SmartBiz is configured with Supabase PostgreSQL, Flask backend, and automated scheduling.
+                    </div>
+                    <div class="card">
+                        <h3>Configuration</h3>
+                        <p><strong>Frontend:</strong> HTML5 + Vanilla JavaScript</p>
+                        <p><strong>Backend:</strong> Flask 2.3.3</strong></p>
+                        <p><strong>Database:</strong> Supabase PostgreSQL</p>
+                        <p><strong>Reports:</strong> Pandas + Excel</p>
+                        <p><strong>Email:</strong> SMTP Notifications</p>
+                        <p><strong>API:</strong> Exchange Rate API Integration</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Test Email Notification</h2>
+                    <form id="email-form">
+                        <div class="form-group">
+                            <label>Recipient Email</label>
+                            <input type="email" id="test-email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Test Email</button>
+                    </form>
+                </div>
+
+                <div class="section">
+                    <h2>Database Status</h2>
+                    <button onclick="checkHealth()" class="btn btn-secondary">
+                        Check Connection
+                    </button>
+                    <div id="health-status" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 SmartBiz - Business Automation System | Powered by Flask & Supabase</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tab).classList.add('active');
+                btn.classList.add('active');
+            });
+        });
+
+        // Fetch and display employees
+        async function loadEmployees() {
+            try {
+                const response = await fetch('/api/employees');
+                const employees = await response.json();
+                const tbody = document.querySelector('#employees-table tbody');
+                tbody.innerHTML = '';
+                employees.forEach(emp => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${emp.id}</td>
+                            <td>${emp.name}</td>
+                            <td>${emp.email}</td>
+                            <td>${emp.department}</td>
+                            <td>
+                                <button onclick="deleteEmployee(${emp.id})" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8em;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('stat-employees').textContent = employees.length;
+            } catch (error) {
+                console.error('Error loading employees:', error);
+            }
+        }
+
+        // Add employee
+        document.getElementById('employee-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('emp-name').value;
+            const email = document.getElementById('emp-email').value;
+            const department = document.getElementById('emp-dept').value;
+
+            try {
+                const response = await fetch('/api/employees', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, department })
+                });
+                if (response.ok) {
+                    alert('✓ Employee added successfully!');
+                    document.getElementById('employee-form').reset();
+                    loadEmployees();
+                }
+            } catch (error) {
+                alert('✗ Error adding employee: ' + error);
+            }
+        });
+
+        // Delete employee
+        async function deleteEmployee(id) {
+            if (confirm('Are you sure?')) {
+                try {
+                    await fetch(`/api/employees/${id}`, { method: 'DELETE' });
+                    loadEmployees();
+                } catch (error) {
+                    alert('Error deleting employee: ' + error);
+                }
+            }
+        }
+
+        // Load and display tasks
+        async function loadTasks() {
+            try {
+                const status = document.getElementById('task-filter').value;
+                const url = status ? `/api/tasks?status=${status}` : '/api/tasks';
+                const response = await fetch(url);
+                const tasks = await response.json();
+                const tbody = document.querySelector('#tasks-table tbody');
+                tbody.innerHTML = '';
+                tasks.forEach(task => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${task.id}</td>
+                            <td>${task.title}</td>
+                            <td><span class="status-badge status-${task.status}">${task.status}</span></td>
+                            <td><span class="priority-${task.priority}">${task.priority}</span></td>
+                            <td>${task.assigned_to}</td>
+                            <td>${task.due_date}</td>
+                            <td>
+                                <button onclick="deleteTask(${task.id})" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8em;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('stat-tasks').textContent = tasks.length;
+                document.getElementById('stat-pending').textContent = tasks.filter(t => t.status === 'pending').length;
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        // Create task
+        document.getElementById('task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-desc').value;
+            const assigned_to = parseInt(document.getElementById('task-assigned').value);
+            const priority = document.getElementById('task-priority').value;
+            const due_date = document.getElementById('task-due').value;
+
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, description, assigned_to, priority, due_date })
+                });
+                if (response.ok) {
+                    alert('✓ Task created successfully!');
+                    document.getElementById('task-form').reset();
+                    loadTasks();
+                }
+            } catch (error) {
+                alert('✗ Error creating task: ' + error);
+            }
+        });
+
+        // Delete task
+        async function deleteTask(id) {
+            if (confirm('Are you sure?')) {
+                try {
+                    await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+                    loadTasks();
+                } catch (error) {
+                    alert('Error deleting task: ' + error);
+                }
+            }
+        }
+
+        // Task filter
+        document.getElementById('task-filter').addEventListener('change', loadTasks);
+
+        // Generate reports
+        async function generateReport(type) {
+            try {
+                let response;
+                if (type === 'task-summary') {
+                    response = await fetch('/api/reports/task-summary', { method: 'POST' });
+                } else if (type === 'performance') {
+                    response = await fetch('/api/reports/performance', { method: 'POST' });
+                } else if (type === 'currency') {
+                    response = await fetch('/api/reports/currency', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currency: 'USD' }) });
+                }
+                const result = await response.json();
+                if (result.success) {
+                    alert('✓ Report generated! Refresh the page to see it in the list.');
+                    loadReports();
+                } else {
+                    alert('✗ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error generating report: ' + error);
+            }
+        }
+
+        // Load reports list
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/reports/list');
+                const data = await response.json();
+                const tbody = document.querySelector('#reports-table tbody');
+                tbody.innerHTML = '';
+                data.reports.forEach(report => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${report}</td>
+                            <td>
+                                <a href="/reports/${report}" download class="btn btn-primary" style="text-decoration: none; display: inline-block; padding: 5px 10px; font-size: 0.8em;">
+                                    Download
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        // Test email
+        document.getElementById('email-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('test-email').value;
+            try {
+                const response = await fetch('/api/notifications/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('✓ Test email sent!');
+                } else {
+                    alert('✗ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        });
+
+        // Check health
+        async function checkHealth() {
+            try {
+                const response = await fetch('/health');
+                const result = await response.json();
+                document.getElementById('health-status').innerHTML = `<div class="alert alert-success">✓ ${result.message}</div>`;
+            } catch (error) {
+                document.getElementById('health-status').innerHTML = `<div class="alert alert-error">✗ Error: ${error}</div>`;
+            }
+        }
+
+        // Load data on page load
+        window.addEventListener('load', () => {
+            loadEmployees();
+            loadTasks();
+            loadReports();
+        });
+    </script>
+</body>
+</html>
