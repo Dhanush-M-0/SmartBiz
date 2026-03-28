@@ -2,36 +2,66 @@
 
 A modern employee and task management application built with **React SPA + Flask REST API**.
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![React](https://img.shields.io/badge/React-18-61DAFB.svg)
+![Flask](https://img.shields.io/badge/Flask-3.0-000000.svg)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.0-38B2AC.svg)
+
+## ✨ Features
+
+- 📊 **Dashboard** - Real-time stats, recent tasks overview
+- 👥 **Employee Management** - Full CRUD with search and department filtering
+- 📋 **Task Management** - Create, assign, track tasks with status/priority
+- 🌙 **Dark Mode** - System-aware theme with manual toggle
+- 🔐 **Authentication** - Supabase Auth integration
+- 📱 **Responsive** - Works on desktop and mobile
+
 ## 🎯 Quick Start
 
 ### Prerequisites
 - Python 3.12+
 - Node.js 18+
-- Supabase account (free tier)
+- Supabase account (free tier works)
 
-### Environment Setup
+### 1. Clone and Setup
 
-**Backend (.env):**
-```env
-SUPABASE_URL=https://dasuomsluytkgcjondne.supabase.co
-SUPABASE_KEY=sb_publishable_KNbhCjeN41koQYpxm3AnSg_8ZXzt3zG
-FLASK_ENV=development
-FLASK_DEBUG=True
-SECRET_KEY=smartbiz-dev-secret-key-2026
+```bash
+git clone https://github.com/Dhanush-M-0/SmartBiz.git
+cd SmartBiz
 ```
 
-**Frontend (.env):**
-```env
-VITE_SUPABASE_URL=https://dasuomsluytkgcjondne.supabase.co
-VITE_SUPABASE_KEY=sb_publishable_KNbhCjeN41koQYpxm3AnSg_8ZXzt3zG
-VITE_API_URL=https://fictional-space-barnacle-jjw94vjjwp4jhj569-5000.app.github.dev/api
+### 2. Backend Setup
+
+```bash
+# Create virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
 ```
 
-### Running Locally
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
+```
+
+### 4. Run the Application
 
 **Terminal 1 - Backend (Port 5000):**
 ```bash
 python run.py
+# Or for production: gunicorn wsgi:app --bind 0.0.0.0:5000
 ```
 
 **Terminal 2 - Frontend (Port 5173):**
@@ -42,50 +72,45 @@ npm run dev
 
 Visit: `http://localhost:5173`
 
-### Running in Codespaces
+## 🔧 Environment Variables
 
-**Frontend:** https://fictional-space-barnacle-jjw94vjjwp4jhj569-5173.app.github.dev/
-**Backend:** https://fictional-space-barnacle-jjw94vjjwp4jhj569-5000.app.github.dev/
+### Backend (.env)
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-anon-public-key
+FLASK_SECRET_KEY=your-random-secret-key
+FLASK_DEBUG=True
+```
+
+### Frontend (frontend/.env)
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_KEY=your-anon-public-key
+```
 
 ## 📁 Project Structure
 
 ```
 smartbiz/
-├── app/                          # Flask Backend
-│   ├── api/                      # REST API Blueprints
-│   │   ├── employees.py         # Employee CRUD endpoints
-│   │   ├── tasks.py             # Task CRUD endpoints
-│   │   └── __init__.py          # Blueprint registry
-│   ├── __init__.py              # App factory
-│   ├── config.py                # Configuration
-│   ├── database.py              # Supabase REST client
-│   ├── models.py                # Data operations
-│   ├── routes.py                # HTML routes (old)
-│   ├── scheduler.py             # Background jobs
-│   ├── notifier.py              # Email notifications
-│   ├── reports.py               # Report generation
-│   └── api_service.py           # External APIs
+├── app/                    # Flask Backend
+│   ├── api/               # REST API endpoints
+│   │   ├── employees.py   # Employee CRUD
+│   │   └── tasks.py       # Task CRUD
+│   ├── database.py        # Supabase REST client
+│   ├── models.py          # Data operations
+│   └── config.py          # Configuration
 │
-├── frontend/                     # React SPA
+├── frontend/              # React SPA
 │   ├── src/
-│   │   ├── api/                 # API client & functions
-│   │   ├── context/             # Global state (Auth, App)
-│   │   ├── pages/               # Page components
-│   │   ├── components/          # Reusable components
-│   │   ├── App.jsx              # Main app with routing
-│   │   ├── main.jsx             # React entry point
-│   │   └── index.css            # Tailwind styles
-│   ├── .env                     # Environment variables
-│   ├── vite.config.js           # Vite config
-│   ├── tailwind.config.js       # Tailwind config
-│   └── package.json             # Dependencies
+│   │   ├── api/          # API client & functions
+│   │   ├── context/      # React contexts (Auth, App, Theme)
+│   │   ├── components/   # Reusable UI components
+│   │   └── pages/        # Page components
+│   └── package.json
 │
-├── run.py                        # Development entry point
-├── wsgi.py                       # Production entry point (Gunicorn)
-├── requirements.txt              # Python dependencies
-├── Dockerfile                    # Container image
-├── docker-compose.yml           # Local dev containers
-└── Procfile                     # Platform deployment
+├── run.py                 # Development entry
+├── wsgi.py               # Production entry (Gunicorn)
+└── requirements.txt      # Python dependencies
 ```
 
 ## 🔌 API Endpoints
@@ -96,95 +121,75 @@ smartbiz/
 | POST | `/api/employees` | Create employee |
 | PUT | `/api/employees/:id` | Update employee |
 | DELETE | `/api/employees/:id` | Delete employee |
-| GET | `/api/tasks` | List all tasks |
-| GET | `/api/tasks?status=Pending` | Filter by status |
+| GET | `/api/tasks` | List tasks (optional `?status=` filter) |
 | POST | `/api/tasks` | Create task |
 | PUT | `/api/tasks/:id` | Update task |
 | DELETE | `/api/tasks/:id` | Delete task |
-| GET | `/health` | Health check |
+| GET | `/health` | Liveness check |
 | GET | `/ready` | Readiness check |
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
 - React 18 + Vite
-- TailwindCSS
-- React Router
+- TailwindCSS 3 (dark mode support)
+- React Router 6
 - Axios
 - Supabase Auth
 
 **Backend:**
 - Flask 3.0
 - Flask-CORS
-- Supabase (REST API directly)
-- Pandas (reports)
-- APScheduler (background jobs)
+- Gunicorn (production)
+- Custom Supabase REST client
 
 **Database:**
 - Supabase PostgreSQL
-- RLS Policies enabled
-
-**Deployment:**
-- Gunicorn (production WSGI)
-- Docker/Docker Compose
-- Heroku/Railway/Render compatible
+- Row Level Security enabled
 
 ## 🚀 Deployment
 
-**Backend to Heroku/Railway:**
+### Backend (Heroku/Railway/Render)
 ```bash
-gunicorn wsgi:app --workers 4 --bind 0.0.0.0:5000
+gunicorn wsgi:app --workers 4 --bind 0.0.0.0:$PORT
 ```
 
-**Frontend to Vercel:**
+### Frontend (Vercel/Netlify)
 ```bash
+cd frontend
 npm run build
+# Deploy the dist/ folder
 ```
 
-## 🔍 Current Status
+## 🧪 Development
 
-✅ **MVP Complete**
-- React SPA with 5 pages (Login, Signup, Dashboard, Employees, Tasks)
-- Flask REST API with full CRUD
-- Supabase integration working
-- Authentication with Supabase Auth
-- Tailwind CSS styling
+```bash
+# Run backend with auto-reload
+FLASK_DEBUG=True python run.py
 
-⚠️ **Known Issues**
-- Frontend not loading employee data on dashboard (API URL config issue in Codespaces)
-- Need to verify RLS policies allow INSERT operations
+# Run frontend with HMR
+cd frontend && npm run dev
+```
 
-❌ **Not Yet Implemented (Phase 2)**
-- Kanban board for tasks
-- Dashboard charts/graphs
-- Report generation & downloads
-- Currency converter
-- Email notifications
-- Advanced filtering/search
+## 📝 Usage Guide
 
-## 📝 Usage
+1. **Sign up** with email on the login page
+2. **Dashboard** - View stats and recent tasks
+3. **Employees** - Add, edit, delete, and search employees
+4. **Tasks** - Create tasks, assign to employees, update status
+5. **Dark Mode** - Click the sun/moon icon to toggle theme
 
-1. **Sign up** with email at login page
-2. **Dashboard** - View stats (employees, task counts)
-3. **Employees** - Add/Edit/Delete employees
-4. **Tasks** - Create tasks, assign to employees, change status
-5. **Logout** - Clear auth session
+## 🔐 Security Notes
 
-## 🔐 Security
-
-- RLS Policies enabled on all tables
-- CORS configured for Codespaces URLs
-- Environment variables for secrets
+- All tables have Row Level Security (RLS) enabled
+- CORS configured for allowed origins
+- Environment variables for all secrets
 - HTTPS enforced in production
-- Session cookies with security flags
 
-## 📞 Support
+## 📄 License
 
-For issues or questions, refer to:
-- Backend logs: `python run.py` output
-- Frontend console: Browser DevTools (F12)
-- Network tab: Check API calls to backend
+MIT License - see LICENSE file for details.
 
 ---
 
-**Last Updated:** March 28, 2026
+**Built with ❤️ by SmartBiz Team | March 2026**
