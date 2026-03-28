@@ -1,5 +1,6 @@
 """
-routes.py — All Flask web routes for SmartBiz dashboard.
+routes.py — HTML web routes for SmartBiz (legacy, kept for compatibility).
+For React SPA, use the /api/* endpoints instead.
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
@@ -11,23 +12,41 @@ from .notifier import notify_overdue_tasks
 main = Blueprint("main", __name__)
 
 
-# ─── DASHBOARD ───────────────────────────────────────────────
+# ─── API INFO (DEFAULT ROUTE) ─────────────────────────────────
 
 @main.route("/")
-def dashboard():
-    tasks     = models.get_all_tasks()
-    employees = models.get_all_employees()
-    overdue   = models.get_overdue_tasks()
-
-    stats = {
-        "total_tasks":    len(tasks),
-        "pending":        sum(1 for t in tasks if t["status"] == "Pending"),
-        "in_progress":    sum(1 for t in tasks if t["status"] == "In Progress"),
-        "done":           sum(1 for t in tasks if t["status"] == "Done"),
-        "total_employees": len(employees),
-        "overdue":        len(overdue),
-    }
-    return render_template("dashboard.html", stats=stats, overdue=overdue, recent_tasks=tasks[:5])
+def index():
+    """API info endpoint - describes available endpoints"""
+    return jsonify({
+        "name": "SmartBiz API",
+        "version": "1.0.0",
+        "description": "Employee and Task Management REST API",
+        "endpoints": {
+            "employees": {
+                "GET /api/employees": "List all employees",
+                "POST /api/employees": "Create employee",
+                "GET /api/employees/:id": "Get one employee",
+                "PUT /api/employees/:id": "Update employee",
+                "DELETE /api/employees/:id": "Delete employee"
+            },
+            "tasks": {
+                "GET /api/tasks": "List all tasks (optional ?status=filter)",
+                "POST /api/tasks": "Create task",
+                "GET /api/tasks/:id": "Get one task",
+                "PUT /api/tasks/:id": "Update task",
+                "DELETE /api/tasks/:id": "Delete task"
+            },
+            "health": {
+                "GET /health": "Liveness check",
+                "GET /ready": "Readiness check"
+            },
+            "currency": {
+                "GET /api/currency/rates": "Get exchange rates",
+                "GET /api/currency/convert": "Convert currency"
+            }
+        },
+        "frontend": "Use the React SPA on port 5173"
+    })
 
 
 # ─── EMPLOYEES ───────────────────────────────────────────────
@@ -133,15 +152,21 @@ def send_overdue_alerts():
 
 # ─── CURRENCY API ────────────────────────────────────────────
 
-@main.route("/currency")
-def currency():
-    rates = get_exchange_rates("USD")
-    return render_template("currency.html", rates=rates)
+@main.route("/api/currency/rates", methods=["GET"])
+def currency_rates():
+    """Get exchange rates for a base currency"""
+    base = request.args.get("base", "USD")
+    rates = get_exchange_rates(base)
+    return jsonify({"success": True, "data": rates})
 
-@main.route("/currency/convert", methods=["GET"])
+@main.route("/api/currency/convert", methods=["GET"])
 def currency_convert():
-    amount        = float(request.args.get("amount", 1))
-    from_currency = request.args.get("from", "USD")
-    to_currency   = request.args.get("to", "INR")
-    result = convert_currency(amount, from_currency, to_currency)
-    return jsonify(result)
+    """Convert amount between currencies"""
+    try:
+        amount = float(request.args.get("amount", 1))
+        from_currency = request.args.get("from", "USD")
+        to_currency = request.args.get("to", "INR")
+        result = convert_currency(amount, from_currency, to_currency)
+        return jsonify({"success": True, "data": result})
+    except ValueError:
+        return jsonify({"success": False, "error": "Invalid amount"}), 400

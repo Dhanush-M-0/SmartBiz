@@ -108,6 +108,6 @@ def delete(emp_id):
         return jsonify({
             "success": True,
             "message": "Employee deleted successfully"
-        }), 204
+        }), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
