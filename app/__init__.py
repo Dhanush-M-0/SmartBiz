@@ -22,8 +22,17 @@ def create_app():
 
     logger.info(f"Starting SmartBiz in {app.config['ENV']} mode")
 
-    # Enable CORS
-    CORS(app)
+    # Enable CORS with React frontend (including Codespaces URLs)
+    cors_origins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://localhost:5173",
+        "https://fictional-space-barnacle-jjw94vjjwp4jhj569-5173.app.github.dev",
+        "https://fictional-space-barnacle-jjw94vjjwp4jhj569-5000.app.github.dev",
+    ]
+    # Allow all Codespaces URLs with pattern matching
+    CORS(app, resources={r"/*": {"origins": cors_origins}}, supports_credentials=True)
+    CORS(app, origins="*")  # Fallback for health checks and debugging
 
     # Register security middleware
     from security import register_security_middleware
@@ -33,7 +42,11 @@ def create_app():
     from error_handlers import register_error_handlers
     register_error_handlers(app)
 
-    # Register blueprints
+    # Register API blueprints (RESTful endpoints)
+    from app.api import register_api_blueprints
+    register_api_blueprints(app)
+
+    # Register main blueprints (HTML routes - kept for compatibility)
     from app.routes import main
     app.register_blueprint(main)
 

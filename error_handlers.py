@@ -1,68 +1,27 @@
 """
-Global error handlers for the Flask application.
-Provides consistent error responses and logging.
+Error handlers for SmartBiz application.
 """
 
 from flask import jsonify
-from logging_config import get_logger
-
-logger = get_logger(__name__)
 
 
 def register_error_handlers(app):
-    """Register global error handlers with the Flask app"""
-
-    @app.errorhandler(400)
-    def bad_request(error):
-        """Handle 400 Bad Request errors"""
-        logger.warning(f"Bad request: {error}")
-        return (
-            jsonify(
-                {
-                    "error": "Bad Request",
-                    "message": str(error.description) if hasattr(error, "description") else str(error),
-                }
-            ),
-            400,
-        )
-
+    """Register error handlers for the Flask app."""
+    
     @app.errorhandler(404)
     def not_found(error):
-        """Handle 404 Not Found errors"""
-        return (
-            jsonify(
-                {
-                    "error": "Not Found",
-                    "message": "The requested resource does not exist",
-                }
-            ),
-            404,
-        )
-
+        """Handle 404 errors."""
+        return jsonify({"error": "Not Found", "message": "The requested resource does not exist"}), 404
+    
     @app.errorhandler(500)
     def internal_error(error):
-        """Handle 500 Internal Server errors"""
-        logger.error(f"Internal server error: {error}", exc_info=True)
-        return (
-            jsonify(
-                {
-                    "error": "Internal Server Error",
-                    "message": "An unexpected error occurred. Please try again later.",
-                }
-            ),
-            500,
-        )
-
-    @app.errorhandler(Exception)
-    def handle_exception(error):
-        """Handle all unhandled exceptions"""
-        logger.error(f"Unhandled exception: {error}", exc_info=True)
-        return (
-            jsonify(
-                {
-                    "error": "Internal Server Error",
-                    "message": "An unexpected error occurred. Please try again later.",
-                }
-            ),
-            500,
-        )
+        """Handle 500 errors."""
+        app.logger.error(f"Internal Server Error: {error}")
+        return jsonify({"error": "Internal Server Error", "message": "An unexpected error occurred"}), 500
+    
+    @app.errorhandler(403)
+    def forbidden(error):
+        """Handle 403 errors."""
+        return jsonify({"error": "Forbidden", "message": "You do not have permission to access this resource"}), 403
+    
+    return app

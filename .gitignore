@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
 # Python
 __pycache__/
@@ -9,9 +11,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -28,28 +27,42 @@ wheels/
 .installed.cfg
 *.egg
 
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 
-# Project
-reports/
-*.xlsx
-*.csv
+# Reports and logs
+reports_output/
 *.log
+logs/
+
+# Flask
+instance/
+.webassets-cache
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sensitive files
+*.pem
+*.key
+*.pub
+secrets.json
+credentials.json

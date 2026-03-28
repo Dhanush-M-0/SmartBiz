@@ -36,47 +36,54 @@ def get_all_tasks():
     res = (
         get_client()
         .table("tasks")
-        .select("*, employees(name, email, department)")
-        .order("deadline", desc=False)
+        .select("*")
+        .order("due_date", desc=False)
         .execute()
     )
     return res.data
 
 def get_tasks_by_status(status: str):
+    # Convert status to lowercase for Supabase check constraint
+    status_lower = status.lower() if status else status
     res = (
         get_client()
         .table("tasks")
-        .select("*, employees(name, email, department)")
-        .eq("status", status)
+        .select("*")
+        .eq("status", status_lower)
         .execute()
     )
     return res.data
 
 def get_overdue_tasks():
+    from datetime import date
     today = date.today().isoformat()
     res = (
         get_client()
         .table("tasks")
-        .select("*, employees(name, email, department)")
-        .lt("deadline", today)
-        .neq("status", "Done")
+        .select("*")
+        .lt("due_date", today)
+        .neq("status", "done")
         .execute()
     )
     return res.data
 
 def add_task(title: str, description: str, assigned_to: str, priority: str, deadline: str):
+    # Convert status and priority to lowercase for Supabase check constraints
+    priority_lower = priority.lower() if priority else "medium"
     res = get_client().table("tasks").insert({
         "title": title,
         "description": description,
         "assigned_to": assigned_to,
-        "priority": priority,
-        "deadline": deadline,
-        "status": "Pending"
+        "priority": priority_lower,
+        "due_date": deadline,
+        "status": "pending"
     }).execute()
     return res.data
 
 def update_task_status(task_id: str, status: str):
-    res = get_client().table("tasks").update({"status": status}).eq("id", task_id).execute()
+    # Convert status to lowercase for Supabase check constraint
+    status_lower = status.lower() if status else status
+    res = get_client().table("tasks").update({"status": status_lower}).eq("id", task_id).execute()
     return res.data
 
 def delete_task(task_id: str):

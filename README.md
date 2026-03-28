@@ -1,163 +1,190 @@
-# SmartBiz — Employee Task & Report Automation System
+# SmartBiz - Management System
 
-A full-stack Python business automation application built for the **RISE Internship Program** by Tamizhan Skills.
+A modern employee and task management application built with **React SPA + Flask REST API**.
 
----
+## 🎯 Quick Start
 
-## 🚀 Features
+### Prerequisites
+- Python 3.12+
+- Node.js 18+
+- Supabase account (free tier)
 
-- **Employee Management** — Add, view, and remove employees
-- **Task Management** — Assign tasks with priority, deadlines, and status tracking
-- **Automated Reports** — Auto-generate Excel & CSV reports for tasks and performance
-- **Live Currency API** — Real-time exchange rates via Frankfurter API (no key needed)
-- **Email Notifications** — Automated overdue task alerts via Gmail SMTP
-- **Background Scheduler** — Daily overdue checks + weekly auto-reports
-- **Web Dashboard** — Clean Flask UI with full CRUD
-- **CLI Interface** — Full command-line access to all features
+### Environment Setup
 
----
-
-## 🛠️ Tech Stack
-
-| Layer       | Technology                     |
-|-------------|-------------------------------|
-| Language    | Python 3.10+                  |
-| Database    | Supabase (PostgreSQL)         |
-| Web         | Flask 3.x + Jinja2 templates  |
-| CLI         | Click + Tabulate              |
-| Reports     | Pandas + openpyxl             |
-| API         | Frankfurter (currency rates)  |
-| Email       | smtplib (Gmail SMTP)          |
-| Scheduler   | schedule + threading          |
-| Version Ctrl| Git                           |
-
----
-
-## ⚙️ Setup Instructions
-
-### 1. Clone the repo
-```bash
-git clone https://github.com/yourusername/smartbiz.git
-cd smartbiz
+**Backend (.env):**
+```env
+SUPABASE_URL=https://dasuomsluytkgcjondne.supabase.co
+SUPABASE_KEY=sb_publishable_KNbhCjeN41koQYpxm3AnSg_8ZXzt3zG
+FLASK_ENV=development
+FLASK_DEBUG=True
+SECRET_KEY=smartbiz-dev-secret-key-2026
 ```
 
-### 2. Create a virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
+**Frontend (.env):**
+```env
+VITE_SUPABASE_URL=https://dasuomsluytkgcjondne.supabase.co
+VITE_SUPABASE_KEY=sb_publishable_KNbhCjeN41koQYpxm3AnSg_8ZXzt3zG
+VITE_API_URL=https://fictional-space-barnacle-jjw94vjjwp4jhj569-5000.app.github.dev/api
 ```
 
-### 3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+### Running Locally
 
-### 4. Set up your Supabase database
-- Go to your [Supabase project](https://supabase.com)
-- Open the **SQL Editor**
-- Paste and run the contents of `supabase_schema.sql`
-
-### 5. Configure your environment
-```bash
-cp .env.example .env
-```
-Edit `.env` and fill in:
-```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-public-key
-FLASK_SECRET_KEY=any-random-string
-EMAIL_SENDER=your-gmail@gmail.com
-EMAIL_PASSWORD=your-gmail-app-password
-```
-
-> 💡 For Gmail, use an **App Password** (not your main password).
-> Go to: Google Account → Security → 2-Step Verification → App Passwords
-
-### 6. Run the Web App
+**Terminal 1 - Backend (Port 5000):**
 ```bash
 python run.py
 ```
-Open: **http://127.0.0.1:5000**
 
----
-
-## 💻 CLI Usage
-
+**Terminal 2 - Frontend (Port 5173):**
 ```bash
-# Employees
-python cli.py employee list
-python cli.py employee add
-
-# Tasks
-python cli.py task list
-python cli.py task list --status "In Progress"
-python cli.py task add
-python cli.py task overdue
-
-# Reports
-python cli.py report tasks
-python cli.py report performance
-
-# Currency
-python cli.py currency rates --base USD
-python cli.py currency convert
-
-# Alerts
-python cli.py send-alerts
+cd frontend
+npm run dev
 ```
 
----
+Visit: `http://localhost:5173`
+
+### Running in Codespaces
+
+**Frontend:** https://fictional-space-barnacle-jjw94vjjwp4jhj569-5173.app.github.dev/
+**Backend:** https://fictional-space-barnacle-jjw94vjjwp4jhj569-5000.app.github.dev/
 
 ## 📁 Project Structure
 
 ```
 smartbiz/
-├── app/
-│   ├── __init__.py          # Flask app factory
-│   ├── database.py          # Supabase client
-│   ├── models.py            # All DB operations
-│   ├── routes.py            # Flask routes
-│   ├── api_service.py       # Currency API
-│   ├── reports.py           # Excel/CSV generation
-│   ├── notifier.py          # Email alerts
-│   ├── scheduler.py         # Background jobs
-│   └── templates/           # HTML templates
-│       ├── base.html
-│       ├── dashboard.html
-│       ├── employees.html
-│       ├── tasks.html
-│       ├── reports.html
-│       └── currency.html
-├── reports_output/          # Auto-generated reports saved here
-├── cli.py                   # CLI entry point
-├── run.py                   # Web app entry point
-├── config.py                # Config from .env
-├── requirements.txt
-├── supabase_schema.sql      # Run this in Supabase SQL Editor
-├── .env.example
-└── README.md
+├── app/                          # Flask Backend
+│   ├── api/                      # REST API Blueprints
+│   │   ├── employees.py         # Employee CRUD endpoints
+│   │   ├── tasks.py             # Task CRUD endpoints
+│   │   └── __init__.py          # Blueprint registry
+│   ├── __init__.py              # App factory
+│   ├── config.py                # Configuration
+│   ├── database.py              # Supabase REST client
+│   ├── models.py                # Data operations
+│   ├── routes.py                # HTML routes (old)
+│   ├── scheduler.py             # Background jobs
+│   ├── notifier.py              # Email notifications
+│   ├── reports.py               # Report generation
+│   └── api_service.py           # External APIs
+│
+├── frontend/                     # React SPA
+│   ├── src/
+│   │   ├── api/                 # API client & functions
+│   │   ├── context/             # Global state (Auth, App)
+│   │   ├── pages/               # Page components
+│   │   ├── components/          # Reusable components
+│   │   ├── App.jsx              # Main app with routing
+│   │   ├── main.jsx             # React entry point
+│   │   └── index.css            # Tailwind styles
+│   ├── .env                     # Environment variables
+│   ├── vite.config.js           # Vite config
+│   ├── tailwind.config.js       # Tailwind config
+│   └── package.json             # Dependencies
+│
+├── run.py                        # Development entry point
+├── wsgi.py                       # Production entry point (Gunicorn)
+├── requirements.txt              # Python dependencies
+├── Dockerfile                    # Container image
+├── docker-compose.yml           # Local dev containers
+└── Procfile                     # Platform deployment
 ```
 
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/employees` | List all employees |
+| POST | `/api/employees` | Create employee |
+| PUT | `/api/employees/:id` | Update employee |
+| DELETE | `/api/employees/:id` | Delete employee |
+| GET | `/api/tasks` | List all tasks |
+| GET | `/api/tasks?status=Pending` | Filter by status |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/tasks/:id` | Update task |
+| DELETE | `/api/tasks/:id` | Delete task |
+| GET | `/health` | Health check |
+| GET | `/ready` | Readiness check |
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+- React 18 + Vite
+- TailwindCSS
+- React Router
+- Axios
+- Supabase Auth
+
+**Backend:**
+- Flask 3.0
+- Flask-CORS
+- Supabase (REST API directly)
+- Pandas (reports)
+- APScheduler (background jobs)
+
+**Database:**
+- Supabase PostgreSQL
+- RLS Policies enabled
+
+**Deployment:**
+- Gunicorn (production WSGI)
+- Docker/Docker Compose
+- Heroku/Railway/Render compatible
+
+## 🚀 Deployment
+
+**Backend to Heroku/Railway:**
+```bash
+gunicorn wsgi:app --workers 4 --bind 0.0.0.0:5000
+```
+
+**Frontend to Vercel:**
+```bash
+npm run build
+```
+
+## 🔍 Current Status
+
+✅ **MVP Complete**
+- React SPA with 5 pages (Login, Signup, Dashboard, Employees, Tasks)
+- Flask REST API with full CRUD
+- Supabase integration working
+- Authentication with Supabase Auth
+- Tailwind CSS styling
+
+⚠️ **Known Issues**
+- Frontend not loading employee data on dashboard (API URL config issue in Codespaces)
+- Need to verify RLS policies allow INSERT operations
+
+❌ **Not Yet Implemented (Phase 2)**
+- Kanban board for tasks
+- Dashboard charts/graphs
+- Report generation & downloads
+- Currency converter
+- Email notifications
+- Advanced filtering/search
+
+## 📝 Usage
+
+1. **Sign up** with email at login page
+2. **Dashboard** - View stats (employees, task counts)
+3. **Employees** - Add/Edit/Delete employees
+4. **Tasks** - Create tasks, assign to employees, change status
+5. **Logout** - Clear auth session
+
+## 🔐 Security
+
+- RLS Policies enabled on all tables
+- CORS configured for Codespaces URLs
+- Environment variables for secrets
+- HTTPS enforced in production
+- Session cookies with security flags
+
+## 📞 Support
+
+For issues or questions, refer to:
+- Backend logs: `python run.py` output
+- Frontend console: Browser DevTools (F12)
+- Network tab: Check API calls to backend
+
 ---
 
-## 📋 RISE Internship Requirements Checklist
-
-| Requirement                        | Status |
-|------------------------------------|--------|
-| Business problem identification    | ✅     |
-| Modular Python application design  | ✅     |
-| Integration with APIs              | ✅     |
-| Integration with databases         | ✅     |
-| Automation of business logic       | ✅     |
-| Error handling and logging         | ✅     |
-| Basic UI (Web + CLI)               | ✅     |
-| Deployment-ready structure         | ✅     |
-| Complete project documentation     | ✅     |
-
----
-
-## 👨‍💻 Author
-
-Built as part of the **RISE Internship Program — Python Programming Domain**
-Tamizhan Skills | rise@tamizhanskills.com
+**Last Updated:** March 28, 2026
