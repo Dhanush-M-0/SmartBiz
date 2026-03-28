@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">💱 Live Currency Rates</div>
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">Exchange Rates (Base: {{ rates.base }}) — {{ rates.date }}</div>
+    {% if rates.rates %}
+    <table>
+      <thead><tr><th>Currency</th><th>Rate</th></tr></thead>
+      <tbody>
+        {% for code, rate in rates.rates.items() %}
+        <tr><td><b>{{ code }}</b></td><td>{{ rate }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--danger);">{{ rates.error }}</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Currency Converter</div>
+    <div class="form-row" style="flex-direction:column;align-items:flex-start;">
+      <div><label>Amount</label><input type="number" id="amount" value="1" style="width:160px;"/></div>
+      <div><label>From</label><input type="text" id="from_cur" value="USD" style="width:100px;text-transform:uppercase;"/></div>
+      <div><label>To</label><input type="text" id="to_cur" value="INR" style="width:100px;text-transform:uppercase;"/></div>
+      <button class="btn btn-primary" onclick="convert()">Convert</button>
+    </div>
+    <div id="result" style="margin-top:16px;font-size:1.2rem;font-weight:700;color:var(--accent);"></div>
+  </div>
+</div>
+
+<script>
+async function convert() {
+  const a = document.getElementById('amount').value;
+  const f = document.getElementById('from_cur').value.toUpperCase();
+  const t = document.getElementById('to_cur').value.toUpperCase();
+  const res = await fetch(`/currency/convert?amount=${a}&from=${f}&to=${t}`);
+  const data = await res.json();
+  if (data.error) {
+    document.getElementById('result').innerText = '❌ ' + data.error;
+  } else {
+    document.getElementById('result').innerText =
+      `${a} ${f} = ${data.converted_amount} ${t}  (as of ${data.date})`;
+  }
+}
+</script>
+{% endblock %}

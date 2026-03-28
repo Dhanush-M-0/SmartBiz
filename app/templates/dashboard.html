@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">📊 Dashboard</div>
+
+<div class="grid grid-4" style="margin-bottom:24px;">
+  <div class="stat-card accent">
+    <div class="label">Total Tasks</div>
+    <div class="value">{{ stats.total_tasks }}</div>
+  </div>
+  <div class="stat-card warning">
+    <div class="label">Pending</div>
+    <div class="value">{{ stats.pending }}</div>
+  </div>
+  <div class="stat-card success">
+    <div class="label">Done</div>
+    <div class="value">{{ stats.done }}</div>
+  </div>
+  <div class="stat-card danger">
+    <div class="label">Overdue</div>
+    <div class="value">{{ stats.overdue }}</div>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-title">Recent Tasks</div>
+    {% if recent_tasks %}
+    <table>
+      <thead><tr><th>Task</th><th>Assigned To</th><th>Status</th><th>Deadline</th></tr></thead>
+      <tbody>
+        {% for task in recent_tasks %}
+        <tr>
+          <td><b>{{ task.title }}</b></td>
+          <td>{{ task.employees.name if task.employees else '—' }}</td>
+          <td>
+            {% if task.status == 'Done' %}<span class="badge badge-done">Done</span>
+            {% elif task.status == 'In Progress' %}<span class="badge badge-progress">In Progress</span>
+            {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
+          </td>
+          <td>{{ task.deadline }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p style="color:var(--muted);">No tasks yet. <a href="/tasks">Add one →</a></p>{% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ Overdue Tasks</div>
+    {% if overdue %}
+    <table>
+      <thead><tr><th>Task</th><th>Assigned To</th><th>Deadline</th></tr></thead>
+      <tbody>
+        {% for task in overdue %}
+        <tr>
+          <td><b>{{ task.title }}</b></td>
+          <td>{{ task.employees.name if task.employees else '—' }}</td>
+          <td style="color:var(--danger);font-weight:600;">{{ task.deadline }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<p style="color:var(--success);font-weight:600;">✅ No overdue tasks!</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

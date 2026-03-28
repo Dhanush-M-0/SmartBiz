@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">📊 Reports & Alerts</div>
+
+<div class="grid grid-2" style="margin-bottom:24px;">
+  <div class="card">
+    <div class="card-title">Generate Reports</div>
+    <form action="/reports/task" method="POST" style="margin-bottom:12px;">
+      <button class="btn btn-primary" type="submit">📋 Generate Task Report (Excel)</button>
+    </form>
+    <form action="/reports/performance" method="POST" style="margin-bottom:12px;">
+      <button class="btn btn-success" type="submit">👤 Employee Performance Report (CSV)</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Email Alerts</div>
+    <p style="color:var(--muted);font-size:.875rem;margin-bottom:16px;">Send overdue task alerts to all assigned employees via email.</p>
+    <form action="/reports/send-overdue" method="POST">
+      <button class="btn btn-danger" type="submit">⚠️ Send Overdue Alerts Now</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Reports History</div>
+  {% if logs %}
+  <table>
+    <thead><tr><th>Report Type</th><th>File Name</th><th>Generated At</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td><b>{{ log.report_type }}</b></td>
+        <td style="font-family:monospace;font-size:.8rem;color:var(--muted);">{{ log.file_name }}</td>
+        <td style="color:var(--muted);">{{ log.generated_at[:19].replace('T',' ') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No reports generated yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartBiz — Business Automation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f8fc; --sidebar: #1e2235; --accent: #4f6ef7;
+      --accent-light: #eef1ff; --success: #22c55e; --danger: #ef4444;
+      --warning: #f59e0b; --text: #1a202c; --muted: #6b7280;
+      --card: #fff; --border: #e5e7eb; --radius: 10px;
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+    /* Sidebar */
+    .sidebar { width: 230px; background: var(--sidebar); color: #fff; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; }
+    .sidebar .logo { font-size: 1.3rem; font-weight: 700; padding: 0 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); letter-spacing: -.3px; }
+    .sidebar .logo span { color: var(--accent); }
+    .sidebar nav { margin-top: 16px; flex: 1; }
+    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 12px 24px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: .9rem; transition: all .2s; }
+    .sidebar nav a:hover, .sidebar nav a.active { background: rgba(79,110,247,.2); color: #fff; border-left: 3px solid var(--accent); }
+    .sidebar nav a .icon { font-size: 1.1rem; }
+    /* Main */
+    .main { margin-left: 230px; flex: 1; padding: 32px; min-height: 100vh; }
+    .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+    /* Cards */
+    .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+    /* Grid */
+    .grid { display: grid; gap: 20px; }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    /* Stat cards */
+    .stat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; }
+    .stat-card .label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .stat-card .value { font-size: 2rem; font-weight: 700; margin: 6px 0 0; }
+    .stat-card.accent .value { color: var(--accent); }
+    .stat-card.success .value { color: var(--success); }
+    .stat-card.warning .value { color: var(--warning); }
+    .stat-card.danger  .value  { color: var(--danger); }
+    /* Badges */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+    .badge-pending    { background: #fef3c7; color: #92400e; }
+    .badge-progress   { background: #dbeafe; color: #1e40af; }
+    .badge-done       { background: #d1fae5; color: #065f46; }
+    .badge-high       { background: #fee2e2; color: #991b1b; }
+    .badge-medium     { background: #fef3c7; color: #92400e; }
+    .badge-low        { background: #d1fae5; color: #065f46; }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: none; font-size: .875rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-primary  { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #3a56e4; }
+    .btn-success  { background: var(--success); color: #fff; }
+    .btn-danger   { background: var(--danger); color: #fff; }
+    .btn-ghost    { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-sm       { padding: 4px 10px; font-size: .8rem; }
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    th { text-align: left; padding: 10px 12px; font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg); }
+    /* Forms */
+    .form-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 20px; }
+    input, select, textarea { padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: .875rem; background: var(--bg); color: var(--text); outline: none; transition: border .2s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+    /* Alerts */
+    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: .875rem; font-weight: 500; }
+    .alert-success { background: #d1fae5; color: #065f46; }
+    .alert-error   { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">Smart<span>Biz</span></div>
+  <nav>
+    <a href="/" class="{% if request.path == '/' %}active{% endif %}"><span class="icon">🏠</span> Dashboard</a>
+    <a href="/employees" class="{% if '/employees' in request.path %}active{% endif %}"><span class="icon">👥</span> Employees</a>
+    <a href="/tasks" class="{% if '/tasks' in request.path %}active{% endif %}"><span class="icon">✅</span> Tasks</a>
+    <a href="/reports" class="{% if '/reports' in request.path %}active{% endif %}"><span class="icon">📊</span> Reports</a>
+    <a href="/currency" class="{% if '/currency' in request.path %}active{% endif %}"><span class="icon">💱</span> Currency</a>
+  </nav>
+</aside>
+<main class="main">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

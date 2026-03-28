@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">✅ Task Management</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-title">Assign New Task</div>
+  <form action="/tasks/add" method="POST">
+    <div class="form-row">
+      <div><label>Title</label><input name="title" placeholder="Task title" required style="width:200px;"/></div>
+      <div><label>Description</label><input name="description" placeholder="Brief description" style="width:220px;"/></div>
+      <div><label>Assign To</label>
+        <select name="assigned_to" style="width:160px;">
+          <option value="">Unassigned</option>
+          {% for emp in employees %}<option value="{{ emp.id }}">{{ emp.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Priority</label>
+        <select name="priority" style="width:120px;">
+          <option>Medium</option><option>High</option><option>Low</option>
+        </select>
+      </div>
+      <div><label>Deadline</label><input name="deadline" type="date" required style="width:150px;"/></div>
+      <button class="btn btn-primary" type="submit">+ Add Task</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div class="card-title" style="margin:0;">All Tasks ({{ tasks|length }})</div>
+    <div style="display:flex;gap:8px;">
+      {% for s in ['All','Pending','In Progress','Done'] %}
+        <a href="/tasks?status={{ s }}" class="btn btn-ghost btn-sm {% if status_filter == s %}btn-primary{% endif %}">{{ s }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% if tasks %}
+  <table>
+    <thead><tr><th>Title</th><th>Assigned To</th><th>Priority</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td><b>{{ task.title }}</b><br><small style="color:var(--muted);">{{ task.description or '' }}</small></td>
+        <td>{{ task.employees.name if task.employees else '—' }}</td>
+        <td>
+          {% if task.priority == 'High' %}<span class="badge badge-high">High</span>
+          {% elif task.priority == 'Low' %}<span class="badge badge-low">Low</span>
+          {% else %}<span class="badge badge-medium">Medium</span>{% endif %}
+        </td>
+        <td>
+          <form action="/tasks/update/{{ task.id }}" method="POST" style="display:inline;">
+            <select name="status" onchange="this.form.submit()" style="font-size:.8rem;padding:4px 8px;border-radius:6px;">
+              {% for s in ['Pending','In Progress','Done'] %}
+                <option {% if task.status == s %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td style="color:var(--danger);font-weight:600;">{{ task.deadline }}</td>
+        <td>
+          <form action="/tasks/delete/{{ task.id }}" method="POST" onsubmit="return confirm('Delete this task?');" style="display:inline;">
+            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No tasks found for this filter.</p>
+  {% endif %}
+</div>
+{% endblock %}

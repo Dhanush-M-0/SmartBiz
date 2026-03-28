@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: smartbiz-web
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: "True"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    command: >
+      sh -c "pip install -q -r requirements.txt &&
+             gunicorn --bind 0.0.0.0:5000 --workers 1 --reload wsgi:app"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s

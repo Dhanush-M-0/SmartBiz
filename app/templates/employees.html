@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">👥 Employees</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-title">Add New Employee</div>
+  <form action="/employees/add" method="POST">
+    <div class="form-row">
+      <div><label>Full Name</label><input name="name" placeholder="e.g. Arjun Kumar" required style="width:200px;"/></div>
+      <div><label>Email</label><input name="email" type="email" placeholder="arjun@company.com" required style="width:220px;"/></div>
+      <div><label>Department</label>
+        <select name="department" required style="width:160px;">
+          <option value="">Select...</option>
+          <option>Engineering</option><option>Sales</option><option>Marketing</option>
+          <option>HR</option><option>Finance</option><option>Operations</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" type="submit">+ Add Employee</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-title">All Employees ({{ employees|length }})</div>
+  {% if employees %}
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Joined</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td><b>{{ emp.name }}</b></td>
+        <td style="color:var(--muted);">{{ emp.email }}</td>
+        <td><span class="badge badge-progress">{{ emp.department }}</span></td>
+        <td style="color:var(--muted);">{{ emp.created_at[:10] }}</td>
+        <td>
+          <form action="/employees/delete/{{ emp.id }}" method="POST" onsubmit="return confirm('Remove {{ emp.name }}?');" style="display:inline;">
+            <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No employees yet. Add one above.</p>
+  {% endif %}
+</div>
+{% endblock %}
