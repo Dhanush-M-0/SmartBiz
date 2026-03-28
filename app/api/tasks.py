@@ -61,11 +61,11 @@ def create():
     try:
         data = request.get_json()
         
-        # Validate required fields
-        if not data.get('title') or not data.get('deadline'):
+        # Validate required fields (only title is truly required)
+        if not data.get('title'):
             return jsonify({
                 "success": False,
-                "error": "Missing required fields: title, deadline"
+                "error": "Missing required field: title"
             }), 400
         
         # Create task
@@ -74,7 +74,7 @@ def create():
             description=data.get('description', ''),
             assigned_to=data.get('assigned_to'),
             priority=data.get('priority', 'Medium'),
-            deadline=data['deadline']
+            deadline=data.get('deadline')  # Optional
         )
         
         return jsonify({

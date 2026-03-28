@@ -70,14 +70,24 @@ def get_overdue_tasks():
 def add_task(title: str, description: str, assigned_to: str, priority: str, deadline: str):
     # Convert status and priority to lowercase for Supabase check constraints
     priority_lower = priority.lower() if priority else "medium"
-    res = get_client().table("tasks").insert({
+    
+    # Build task data, excluding None/empty values for foreign keys
+    task_data = {
         "title": title,
-        "description": description,
-        "assigned_to": assigned_to,
+        "description": description or "",
         "priority": priority_lower,
-        "due_date": deadline,
         "status": "pending"
-    }).execute()
+    }
+    
+    # Only include assigned_to if it's a valid value (not empty string or None)
+    if assigned_to and assigned_to.strip():
+        task_data["assigned_to"] = assigned_to
+    
+    # Only include due_date if provided
+    if deadline and deadline.strip():
+        task_data["due_date"] = deadline
+    
+    res = get_client().table("tasks").insert(task_data).execute()
     return res.data
 
 def update_task_status(task_id: str, status: str):
