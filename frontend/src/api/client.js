@@ -8,15 +8,9 @@ function getApiBaseUrl() {
     return import.meta.env.VITE_API_URL
   }
   
-  // In Codespaces, construct URL from current host
-  if (window.location.hostname.includes('github.dev')) {
-    // Replace the frontend port (5173) with backend port (5000)
-    const backendUrl = window.location.origin.replace('-5173.', '-5000.')
-    return `${backendUrl}/api`
-  }
-  
-  // Default for local development
-  return 'http://localhost:5000/api'
+  // Use relative URL - Vite proxy handles /api requests
+  // This works for both local dev and Codespaces
+  return '/api'
 }
 
 const apiClient = axios.create({
